@@ -135,7 +135,7 @@ class TestFilenameRandomizer
     new_name = randomizer.send(:generate_random_name, 'test.txt')
     
     assert(new_name.end_with?('.txt'), "Should preserve .txt extension")
-    assert_equal(20, new_name.length, "Should have correct length (16 hex chars + 4 for .txt)")
+    assert_equal(20, new_name.length, "Should have correct length (length: 8 * 2 = 16 hex chars + 4 for .txt)")
   end
 
   def test_generate_random_name_without_extension
@@ -143,7 +143,7 @@ class TestFilenameRandomizer
     new_name = randomizer.send(:generate_random_name, 'test.txt')
     
     assert(!new_name.include?('.'), "Should not include extension")
-    assert_equal(16, new_name.length, "Should have correct length (16 hex chars)")
+    assert_equal(16, new_name.length, "Should have correct length (length: 8 * 2 = 16 hex chars)")
   end
 
   def test_dry_run_mode
