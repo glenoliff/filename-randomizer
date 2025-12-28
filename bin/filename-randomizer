@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/filename_randomizer'
+require 'optparse'
+
+# Parse command-line options
+options = {
+  recursive: false,
+  dry_run: false,
+  preserve_extensions: true,
+  length: 8
+}
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: filename-randomizer [options] DIRECTORY"
+  opts.separator ""
+  opts.separator "Randomize filenames in a directory"
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-r", "--recursive", "Randomize files recursively in subdirectories") do
+    options[:recursive] = true
+  end
+
+  opts.on("-d", "--dry-run", "Show what would be renamed without actually renaming") do
+    options[:dry_run] = true
+  end
+
+  opts.on("-n", "--no-preserve-extensions", "Don't preserve file extensions") do
+    options[:preserve_extensions] = false
+  end
+
+  opts.on("-l", "--length LENGTH", Integer, "Length of random name (default: 8)") do |length|
+    options[:length] = length
+  end
+
+  opts.on("-h", "--help", "Show this help message") do
+    puts opts
+    exit
+  end
+end
+
+begin
+  parser.parse!
+
+  if ARGV.empty?
+    puts "Error: Directory path is required"
+    puts ""
+    puts parser
+    exit 1
+  end
+
+  directory = ARGV[0]
+  
+  randomizer = FilenameRandomizer.new(directory, options)
+  randomizer.randomize!
+  
+rescue ArgumentError => e
+  puts "Error: #{e.message}"
+  exit 1
+rescue => e
+  puts "An error occurred: #{e.message}"
+  puts e.backtrace if ENV['DEBUG']
+  exit 1
+end
